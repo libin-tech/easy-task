@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://gitea.io/">
-    <img alt="Gitea" src="https://raw.githubusercontent.com/go-gitea/gitea/main/public/img/gitea.svg" width="220"/>
+    <img alt="Gitea" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.qinxue365.com%2Fuploads%2Fallimg%2F1802%2F4092-1P226111645106.gif&refer=http%3A%2F%2Fimg.qinxue365.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644220099&t=3844847d1f141284a6204b7342e36d6c" width="220"/>
   </a>
 </p>
 <h1 align="center">EasyTask - Make concurrent task processing simpler</h1>
