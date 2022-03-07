@@ -3,8 +3,9 @@ package com.binli.easytask.utils;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 线程休眠辅助工具类
+ *
  * @author yongen
- * @description: 线程休眠辅助工具类
  * @date 2022/1/7 2:36 PM
  */
 public class SleepTools {

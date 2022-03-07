@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="EasyTask" />
+        <module name="easytask" />
       </profile>
     </annotationProcessing>
   </component>

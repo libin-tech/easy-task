@@ -11,8 +11,8 @@ import com.binli.easytask.model.TaskResult;
  */
 public class PendingJobTask<T, R> implements Runnable {
 
-  private JobInfo<R> jobInfo;
-  private T data;
+  private final JobInfo<R> jobInfo;
+  private final T data;
 
   public PendingJobTask(JobInfo<R> jobInfo, T data) {
     super();
@@ -23,11 +23,11 @@ public class PendingJobTask<T, R> implements Runnable {
   @Override
   public void run() {
     R r = null;
-    ITaskProcesser<T, R> taskProcesser = (ITaskProcesser<T, R>) jobInfo.getTaskProcesser();
+    ITaskProcessor<T, R> taskProcessor = (ITaskProcessor<T, R>) jobInfo.getTaskProcessor();
     TaskResult<R> taskResult = null;
     try {
       // 执行调用者自己实现的业务方法，返回业务执行结果
-      taskResult = taskProcesser.taskExecute(data);
+      taskResult = taskProcessor.taskExecute(data);
       // 开始检查业务执行结果的完整性
       if (null == taskResult) {
         taskResult = new TaskResult<R>(TaskResultType.EXCEPTION, r, "未返回业务执行结果！");
@@ -42,7 +42,8 @@ public class PendingJobTask<T, R> implements Runnable {
     } catch (Exception e) {
       taskResult = new TaskResult<R>(TaskResultType.EXCEPTION, r, e.getMessage());
     }finally {
-      jobInfo.addResult(taskResult, PendingJobPool.checkJobProcesser);
+      assert taskResult != null;
+      jobInfo.addResult(taskResult, PendingJobPool.checkJobProcessor);
     }
   }
 

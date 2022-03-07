@@ -1,16 +1,17 @@
 package com.binli.easytask.model;
 
-import com.binli.easytask.core.CheckJobProcesser;
-import com.binli.easytask.core.ITaskProcesser;
+import com.binli.easytask.core.CheckJobProcessor;
+import com.binli.easytask.core.ITaskProcessor;
 import com.binli.easytask.enums.TaskResultType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
+ * 提交给框架执行的工作实体类, 工作：表示本批次需要处理的同性质任务(Task)的一个集合
+ *
  * @author yongen
- * @description: 提交给框架执行的工作实体类, 工作：表示本批次需要处理的同性质任务(Task)的一个集合
  * @date 2022/1/8 3:05 PM
  */
 public class JobInfo<R> {
@@ -28,17 +29,17 @@ public class JobInfo<R> {
   /**
    * 工作任务处理器
    */
-  private final ITaskProcesser<?, ?> taskProcesser;
+  private final ITaskProcessor<?, ?> taskProcessor;
 
   /**
    * 任务处理成功数量
    */
-  private final AtomicInteger successCount;
+  private final LongAdder successCount;
 
   /**
    * 已处理的任务数
    */
-  private final AtomicInteger taskProcesserCount;
+  private final LongAdder taskProcessorCount;
 
   /**
    * 结果队列：从头拿 从尾部放
@@ -50,62 +51,68 @@ public class JobInfo<R> {
    */
   private final long expireTime;
 
-  public JobInfo(String jobId, int jobLength, ITaskProcesser<?, ?> taskProcesser, long expireTime) {
+  public JobInfo(String jobId, int jobLength, ITaskProcessor<?, ?> taskProcessor, long expireTime) {
     super();
     this.jobId = jobId;
     this.jobLength = jobLength;
-    this.taskProcesser = taskProcesser;
+    this.taskProcessor = taskProcessor;
     // 初始为0
-    this.successCount = new AtomicInteger(0);
+    this.successCount = new LongAdder();
     // 初始为0
-    this.taskProcesserCount = new AtomicInteger(0);
+    this.taskProcessorCount = new LongAdder();
     //阻塞队列不应该由调用者传入，应该内部生成，长度为工作的任务个数
-    this.taskDetailDeque = new LinkedBlockingDeque<TaskResult<R>>(jobLength);
+    this.taskDetailDeque = new LinkedBlockingDeque<>(jobLength);
     this.expireTime = expireTime;
   }
 
-  public ITaskProcesser<?, ?> getTaskProcesser() {
-    return taskProcesser;
+  public ITaskProcessor<?, ?> getTaskProcessor() {
+    return taskProcessor;
   }
 
   /**
    * 提供获取任务处理成功数量
    */
   public int getSuccessCount() {
-    return successCount.get();
+    return successCount.intValue();
   }
 
   /**
    * 提供获取已处理的任务数量
    */
-  public int getTaskProcesserCount() {
-    return taskProcesserCount.get();
+  public int getTaskProcessorCount() {
+    return taskProcessorCount.intValue();
   }
 
   /**
    * 提供获取工作中失败的次数
    */
   public int getFailCount() {
-    return taskProcesserCount.get() - successCount.get();
+    return taskProcessorCount.intValue() - successCount.intValue();
   }
 
   /**
    * 提供查询任务进度的方法
    */
   public String getTotalProcess() {
-    return "Success[" + successCount.get() + "]/Current[" + taskProcesserCount.get() + "] Total[" + jobLength + "]";
+    String formatter = "JobId [%s] task detail : "
+        + "Success[%s] "
+        + "Current[%s] "
+        + "Fail[%s] "
+        + "Total[%s]";
+    return String.format(formatter, jobId, getSuccessCount(), getTaskProcessorCount(), getFailCount(), jobLength);
   }
 
   /**
    * 提供获取工作中每个任务的处理结果详情
+   *
    * @return 任务执行结果详情集合
    */
   public List<TaskResult<R>> getTaskDetail() {
-    List<TaskResult<R>> list = new LinkedList<TaskResult<R>>();
+    List<TaskResult<R>> list = new LinkedList<>();
     TaskResult<R> taskResult;
     //从阻塞队列中拿任务结果
     // 反复取，一直取到null为止，说明目前队列中的最新的任务结果已经取完，可以不取了
-    while ((taskResult=taskDetailDeque.pollFirst()) != null) {
+    while ((taskResult = taskDetailDeque.pollFirst()) != null) {
       list.add(taskResult);
     }
     return list;
@@ -114,15 +121,15 @@ public class JobInfo<R> {
   /**
    * 提供放任务的结果的方法，从业务角度来说，保证最终一致性即可，不需要加锁
    */
-  public void addResult(TaskResult<R> taskResult, CheckJobProcesser checkJobProcesser) {
+  public void addResult(TaskResult<R> taskResult, CheckJobProcessor checkJobProcessor) {
     if (TaskResultType.SUCCESS.equals(taskResult.getResultType())) {
-      successCount.incrementAndGet();
+      successCount.increment();
     }
     taskDetailDeque.addLast(taskResult);
-    taskProcesserCount.incrementAndGet();
+    taskProcessorCount.increment();
     // 当工作长度等于已处理的任务数时，代表任务执行完毕，此时讲任务放入过期缓存队列中等待处理
-    if (jobLength == getTaskProcesserCount()) {
-      checkJobProcesser.putJob(jobId, expireTime);
+    if (jobLength == getTaskProcessorCount()) {
+      checkJobProcessor.putJob(jobId, expireTime);
     }
   }
 

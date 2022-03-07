@@ -4,8 +4,9 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
+ * 线程池饱和策略
+ *
  * @author yongen
- * @description: 线程池饱和策略
  * @date 2022/1/8 3:16 PM
  */
 public class CfRejectedExecutionHandler implements RejectedExecutionHandler {

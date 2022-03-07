@@ -4,33 +4,33 @@ import com.binli.easytask.model.TaskItem;
 import java.util.concurrent.DelayQueue;
 
 /**
+ * 任务完成后, 在一定的时间供查询，之后为释放资源节约内存，需要定期处理过期的任务
  * @author yongen
- * @description: 任务完成后, 在一定的时间供查询，之后为释放资源节约内存，需要定期处理过期的任务
  * @date 2022/1/8 3:07 PM
  */
-public class CheckJobProcesser {
+public class CheckJobProcessor {
 
   /**
    * 存放已完成任务等待过期的队列
    */
   public static DelayQueue<TaskItem<String>> queue = new DelayQueue<>();
 
-  private CheckJobProcesser() {
+  private CheckJobProcessor() {
   }
 
   private static class CheckJobProcessesHolder {
 
-    public static CheckJobProcesser holder = new CheckJobProcesser();
+    public static CheckJobProcessor holder = new CheckJobProcessor();
   }
 
-  public static CheckJobProcesser getInstance() {
+  public static CheckJobProcessor getInstance() {
     return CheckJobProcessesHolder.holder;
   }
 
   /**
    * 处理队列中到期任务的处理
    */
-  private static class FetchJob implements Runnable {
+  public static class FetchJob implements Runnable {
 
     @Override
     public void run() {
@@ -49,8 +49,8 @@ public class CheckJobProcesser {
   /**
    * 工作执行结束后，将执行返回结果存入等待过期队列中
    *
-   * @param jobId
-   * @param expireTime
+   * @param jobId 任务ID
+   * @param expireTime 过期时间
    */
   public void putJob(String jobId, long expireTime) {
     TaskItem<String> taskItem = new TaskItem<>(expireTime, jobId);

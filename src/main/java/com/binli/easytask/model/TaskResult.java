@@ -3,8 +3,9 @@ package com.binli.easytask.model;
 import com.binli.easytask.enums.TaskResultType;
 
 /**
+ * 任务返回结果实体类
+ *
  * @author yongen
- * @description: 任务返回结果实体类
  * @date 2022/1/7 2:39 PM
  */
 public class TaskResult<R> {
@@ -26,8 +27,8 @@ public class TaskResult<R> {
   /**
    * 成功时构造方法
    *
-   * @param resultType
-   * @param returnValue
+   * @param resultType 任务执行返回结果类型
+   * @param returnValue 任务执行返回结果数据
    */
   public TaskResult(TaskResultType resultType, R returnValue) {
     super();
@@ -39,8 +40,8 @@ public class TaskResult<R> {
   /**
    * 失败时构造方法
    *
-   * @param resultType
-   * @param returnValue
+   * @param resultType 任务执行返回结果类型
+   * @param returnValue 任务执行返回结果数据
    */
   public TaskResult(TaskResultType resultType, R returnValue, String reason) {
     super();

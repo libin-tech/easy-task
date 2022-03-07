@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class QueryMyTask implements Runnable{
 
-  private PendingJobPool pool;
+  private final PendingJobPool pool;
 
-  private String jobId;
+  private final String jobId;
 
   public QueryMyTask(PendingJobPool pool, String jobId) {
     super();
@@ -27,7 +27,7 @@ public class QueryMyTask implements Runnable{
     while (queryCount < 400) {
       List<TaskResult<Integer>> taskResults = pool.getTaskDetailList(jobId);
       if (null != taskResults) {
-        System.out.println(pool.getTaskTotalProcesser(jobId));
+        System.out.println(pool.getTaskTotalProcessor(jobId));
         System.out.println(taskResults);
       }
       SleepTools.ms(100);

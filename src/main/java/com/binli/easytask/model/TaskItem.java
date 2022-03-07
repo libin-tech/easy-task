@@ -4,14 +4,15 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 存到队列里的元素,支持延时获取的元素的阻塞队列，元素必须要实现Delayed接口。根据有效时间作为队列的优先级
+ *
  * @author yongen
- * @description: 存到队列里的元素,支持延时获取的元素的阻塞队列，元素必须要实现Delayed接口。根据有效时间作为队列的优先级
  * @date 2022/1/7 2:28 PM
  */
 public class TaskItem<T> implements Delayed {
 
   /**
-   *  过期时间 单位ms
+   * 过期时间 单位ms
    */
   private final Long activeTime;
 
