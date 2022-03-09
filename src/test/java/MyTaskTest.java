@@ -1,5 +1,6 @@
 import com.binli.easytask.core.ITaskProcessor;
 import com.binli.easytask.core.PendingJobPool;
+import com.binli.easytask.core.QueryTask;
 import java.util.Random;
 
 /**
@@ -13,7 +14,7 @@ public class MyTaskTest {
   // 工作任务id
   private final static String JOB_ID = "jobId:001【判断随机数区间返回状态】";
   // 工作长度（次数）
-  private final static int JOB_LENGTH = 10000;
+  private final static int JOB_LENGTH = 1000;
 
 
   public static void main(String[] args) {
@@ -28,7 +29,7 @@ public class MyTaskTest {
       pool.putTask(JOB_ID, random.nextInt(10));
     }
     // 启动查询线程
-    new Thread(new QueryMyTask(pool, JOB_ID)).start();
+    new Thread(new QueryTask(pool, JOB_ID, JOB_LENGTH, 1)).start();
   }
 
 }

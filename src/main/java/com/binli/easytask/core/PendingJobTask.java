@@ -5,8 +5,9 @@ import com.binli.easytask.model.JobInfo;
 import com.binli.easytask.model.TaskResult;
 
 /**
+ * 对工作中的任务进行包装，提交给线程池使用，并处理任务的结果，写入阻塞队列供查询
+ *
  * @author yongen
- * @description: 对工作中的任务进行包装，提交给线程池使用，并处理任务的结果，写入阻塞队列供查询
  * @date 2022/1/8 3:18 PM
  */
 public class PendingJobTask<T, R> implements Runnable {
@@ -35,13 +36,13 @@ public class PendingJobTask<T, R> implements Runnable {
       if (null == taskResult.getResultType()) {
         if (null == taskResult.getReason()) {
           taskResult = new TaskResult<R>(TaskResultType.EXCEPTION, r, "未返回业务执行结果的描述！");
-        }else {
+        } else {
           taskResult = new TaskResult<R>(TaskResultType.EXCEPTION, r, "未返回业务执行结果的返回类型！");
         }
       }
     } catch (Exception e) {
       taskResult = new TaskResult<R>(TaskResultType.EXCEPTION, r, e.getMessage());
-    }finally {
+    } finally {
       assert taskResult != null;
       jobInfo.addResult(taskResult, PendingJobPool.checkJobProcessor);
     }

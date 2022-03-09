@@ -94,11 +94,7 @@ public class JobInfo<R> {
    * 提供查询任务进度的方法
    */
   public String getTotalProcess() {
-    String formatter = "JobId [%s] task detail : "
-        + "Success[%s] "
-        + "Current[%s] "
-        + "Fail[%s] "
-        + "Total[%s]";
+    String formatter = "JobId [%s] task detail : Success[%s] Current[%s] Fail[%s] Total[%s]";
     return String.format(formatter, jobId, getSuccessCount(), getTaskProcessorCount(), getFailCount(), jobLength);
   }
 

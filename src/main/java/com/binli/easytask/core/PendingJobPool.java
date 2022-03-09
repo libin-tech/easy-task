@@ -24,7 +24,7 @@ public class PendingJobPool {
    */
   private static final int CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors();
   /**
-   * 线程池存放任务工作队列，最大容量为5000
+   * 线程池存放任务工作队列，最大容量为10000
    */
   private static final BlockingQueue<Runnable> TASK_QUEUE = new ArrayBlockingQueue<Runnable>(10000);
 
@@ -69,9 +69,9 @@ public class PendingJobPool {
   }
 
   /**
-   * 根据工作任务id获取工作任务
+   * 对调用者开放：根据工作任务id获取工作任务
    */
-  private <R> JobInfo<R> getJob(String jobId) {
+  public <R> JobInfo<R> getJob(String jobId) {
     JobInfo<R> jobInfo = (JobInfo<R>) JOB_MAP.get(jobId);
     if (null == jobInfo) {
       throw new RuntimeException("工作任务：" + jobId + ", 非法任务！");
