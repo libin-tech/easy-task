@@ -14,7 +14,6 @@ public class CfRejectedExecutionHandler implements RejectedExecutionHandler {
   @Override
   public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
     try {
-      System.out.println("任务线程：" + Thread.currentThread().getName() + " 被丢弃！正在尝试重新运行...");
       // 重新放入队列里执行
       executor.getQueue().put(r);
     } catch (InterruptedException e) {
