@@ -48,7 +48,6 @@ public class QueryTask implements Runnable {
       List<TaskResult<Integer>> taskResults = pool.getTaskDetailList(jobId);
       if (!taskResults.isEmpty()) {
         System.out.println(pool.getTaskTotalProcessor(jobId));
-        System.out.println(taskResults);
         int current = pool.getJob(jobId).getTaskProcessorCount();
         if (current == jobLength) {
           isStop = true;
